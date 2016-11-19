@@ -39,6 +39,7 @@ import java.util.Random;
 
 /**
  * Created by Administrator on 11/1 0001.
+ * 轨迹 主页面
  */
 
 public class trajectoryFragment extends Fragment {

@@ -23,6 +23,7 @@ import static com.example.administrator.pass.tools.Maptools.zoom;
 
 /**
  * Created by Administrator on 11/17 0017.
+ * 地图标志的状态类
  */
 
 public class markerState  {

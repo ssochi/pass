@@ -14,6 +14,7 @@ import java.util.List;
 
 /**
  * Created by Administrator on 11/10 0010.
+ * 对经纬度处理的类
  */
 
 public class Maptools {

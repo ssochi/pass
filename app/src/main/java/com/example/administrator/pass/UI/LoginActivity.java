@@ -1,4 +1,4 @@
-package com.example.administrator.pass;
+package com.example.administrator.pass.UI;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -8,6 +8,7 @@ import android.view.KeyEvent;
 import android.view.Window;
 
 import com.example.administrator.pass.Fragment.LoginFragment;
+import com.example.administrator.pass.R;
 
 public class LoginActivity extends AppCompatActivity {
 	LoginFragment loginFragment;

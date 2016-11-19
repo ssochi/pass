@@ -1,4 +1,4 @@
-package com.example.administrator.pass;
+package com.example.administrator.pass.UI;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -11,9 +11,11 @@ import android.widget.FrameLayout;
 
 import com.baidu.mapapi.SDKInitializer;
 import com.example.administrator.pass.Fragment.trajectoryFragment;
+import com.example.administrator.pass.R;
 
 /**
  * Created by Administrator on 11/1 0001.
+ * 主界面
  */
 
 public class ZoneActivity extends AppCompatActivity {
