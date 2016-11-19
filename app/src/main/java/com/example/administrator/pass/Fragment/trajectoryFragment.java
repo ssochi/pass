@@ -1,14 +1,12 @@
 package com.example.administrator.pass.Fragment;
 
 import android.app.Fragment;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -29,19 +27,15 @@ import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.DistanceUtil;
-import com.example.administrator.pass.MapActivity;
 import com.example.administrator.pass.R;
 import com.example.administrator.pass.Service.LocationService;
 import com.example.administrator.pass.tools.point;
-import com.example.administrator.pass.tools.smoke;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import javax.microedition.khronos.opengles.GL10;
 
 /**
  * Created by Administrator on 11/1 0001.
@@ -187,7 +181,7 @@ public class trajectoryFragment extends Fragment {
 	private int getZoom(point max, point min) {
 		double distance = DistanceUtil. getDistance(new LatLng(max.getIn1(),max.getIn2()),new LatLng(min.getIn1(),min.getIn2()));
 		System.out.println("distance:"+distance);
-		Integer zoom[] = {2000000,1000000,500000,200000,100000,50000,25000,20000,10000,5000,2000,1000,500,200,100,50,20,10};
+		int zoom[] = {2000000,1000000,500000,200000,100000,50000,25000,20000,10000,5000,2000,1000,500,200,100,50,20,10,5,2};
 		for(int i=0;i<zoom.length;i++){
 			if(zoom[i]<distance/7){
 				return i+3;

@@ -4,26 +4,23 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.baidu.mapapi.map.TextOptions;
 import com.example.administrator.pass.tools.markerState;
-import  com.example.administrator.pass.tools.smoke;
+import com.example.administrator.pass.tools.Maptools;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.Poi;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
-import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.Gradient;
 import com.baidu.mapapi.map.HeatMap;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
-import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.Overlay;
@@ -32,7 +29,6 @@ import com.baidu.mapapi.map.PolygonOptions;
 import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.model.LatLng;
 import com.example.administrator.pass.Service.LocationService;
-import com.example.administrator.pass.tools.smoke;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +44,8 @@ public class MapActivity extends AppCompatActivity {
     static LatLng mpostion = new LatLng(39.926854,119.56445);
     List<markerState> markerList = new ArrayList<>();
     Overlay Smoke;
+    float zoom;
+    boolean zoomchange = false;
 
 
     @Override
@@ -67,11 +65,11 @@ public class MapActivity extends AppCompatActivity {
         mMapView = (MapView) findViewById(R.id.bmapView);
         mCurrentMode = MyLocationConfiguration.LocationMode.NORMAL;
         mBaiduMap = mMapView.getMap();
-        addMarker(mpostion,"0","information");
+        addMarker(mpostion,"0","infomation here",R.mipmap.location_marker);
         //去除百度logo
         mMapView.removeViewAt(1);
 //        initHeatMap();
-
+        zoom = mBaiduMap.getMapStatus().zoom;
 
         mBaiduMap.setMyLocationEnabled(true);
         // 开启室内图
@@ -79,32 +77,56 @@ public class MapActivity extends AppCompatActivity {
         mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                int id = Integer.parseInt(marker.getTitle());
-                markerState m = markerList.get(id);
-
-                if(!m.hasClick)
-                {
-                    LatLng markerPosition = marker.getPosition();
-//                    LatLng p = new LatLng(markerPosition.latitude + 0.0002,markerPosition.longitude + 0.0002);
-                    OverlayOptions textOption = new TextOptions()
-                            .bgColor(0)
-                            .fontSize(50)
-                            .fontColor(0xFFFF00FF)
-                            .text(m.information)
-                            .position(markerPosition);
-                    //在地图上添加该文字对象并显示
-                    Overlay line = mBaiduMap.addOverlay(textOption);
-                    m.setLine(line);
-                    m.hasClick = true;
-                }else {
-                    m.getLine().remove();
-                    m.hasClick = false;
+                if (!marker.getTitle().equals("null")){
+                    int id = Integer.parseInt(marker.getTitle());
+                    markerState m = markerList.get(id);
+                    m.click(marker,mBaiduMap,mBaiduMap.getMapStatus().zoom);
                 }
-
 
                 return false;
             }
         });
+        mBaiduMap.setOnMapStatusChangeListener(new BaiduMap.OnMapStatusChangeListener() {
+            @Override
+            public void onMapStatusChangeStart(MapStatus mapStatus) {
+                zoom = mapStatus.zoom;
+
+                    for(int i = 0;i<markerList.size();i++){
+                        markerState m = markerList.get(i);
+                        if(m.hasClick){
+                            m.getLine().remove();
+                            m.getChatbox().remove();
+                        }
+                    }
+
+            }
+
+            @Override
+            public void onMapStatusChange(MapStatus mapStatus) {
+
+            }
+
+            @Override
+            public void onMapStatusChangeFinish(MapStatus mapStatus) {
+
+                float z = mapStatus.zoom;
+
+                    for(int i = 0;i<markerList.size();i++){
+                        markerState m = markerList.get(i);
+                        if(m.hasClick){
+                            m.getLine().remove();
+                            m.getChatbox().remove();
+                            m.addChatbox(m.latLng,mBaiduMap,z);
+                            m.addLine(m.latLng,mBaiduMap,z);
+
+
+                        }
+                    }
+
+            }
+        });
+
+
     }
 
     private void initHeatMap() {
@@ -298,7 +320,7 @@ public class MapActivity extends AppCompatActivity {
                 MapStatus.Builder builder = new MapStatus.Builder();
                 builder.target(ll).zoom(18.0f);
                 mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
-                Smoke = mBaiduMap.addOverlay(smoke.getOverlayOptions(ll,200.0,40));
+                Smoke = Maptools.getSmokeOverlayOptions(new LatLng(location.getLatitude(), location.getLongitude()),200.0,40,mBaiduMap);
                 MyLocationData locData = new MyLocationData.Builder().accuracy(location.getRadius())
                         // 此处设置开发者获取到的方向信息，顺时针0-360
                         .direction(100).latitude(location.getLatitude()).longitude(location.getLongitude()).build();
@@ -311,7 +333,7 @@ public class MapActivity extends AppCompatActivity {
                         .direction(100).latitude(location.getLatitude()).longitude(location.getLongitude()).build();
                 mBaiduMap.setMyLocationData(locData);
                 Smoke.remove();
-                Smoke = mBaiduMap.addOverlay(smoke.getOverlayOptions(new LatLng(location.getLatitude(), location.getLongitude()),200.0,40));
+                Smoke = Maptools.getSmokeOverlayOptions(new LatLng(location.getLatitude(), location.getLongitude()),200.0,40,mBaiduMap);
             }
             }
 
@@ -324,19 +346,7 @@ public class MapActivity extends AppCompatActivity {
 
 
     }
-    public void addMarker(LatLng latLng,String id,String info){
-        //定义Maker坐标点
-
-        //构建Marker图标
-        BitmapDescriptor bitmap = BitmapDescriptorFactory
-                .fromResource(R.mipmap.location_marker);
-        //构建MarkerOption，用于在地图上添加Marker
-        OverlayOptions option = new MarkerOptions()
-                .position(latLng)
-                .icon(bitmap)
-                .title(id);
-        //在地图上添加Marker，并显示
-        Overlay marker = mBaiduMap.addOverlay(option);
-        markerList.add(new markerState(false,info,marker));
+    public void addMarker(LatLng latLng,String id,String info,int path){
+        markerList.add(markerState.init(latLng,id,info,path,mBaiduMap,getResources()));
     }
 }
