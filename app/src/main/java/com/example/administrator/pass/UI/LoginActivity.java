@@ -5,7 +5,6 @@ import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.Window;
 
 import com.example.administrator.pass.Fragment.LoginFragment;
 import com.example.administrator.pass.R;
@@ -28,7 +27,6 @@ public class LoginActivity extends AppCompatActivity {
 		loginFragment = new LoginFragment();
 		transaction.replace(R.id.LoginFrameLayout, loginFragment);
 		transaction.commit();
-
 	}
 
 	@Override

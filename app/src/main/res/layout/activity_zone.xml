@@ -1,49 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
-                xmlns:tools="http://schemas.android.com/tools"
-                android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity = "start"
-    >
-    <TextView
+                                        xmlns:tools="http://schemas.android.com/tools"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical">
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="hello"/>
-</LinearLayout>
-<RelativeLayout
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="13dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_gravity="start"
         >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="hello"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
         <FrameLayout
-            android:id="@+id/trajectory_framelayout"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            >
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="13dp">
 
+            <FrameLayout
+                android:id="@+id/trajectory_framelayout"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                >
+            </FrameLayout>
 
+            <Button
+                android:id="@+id/btnToMap"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="bottom|right"/>
         </FrameLayout>
-        <Button
-            android:id="@+id/btnToMap"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="bottom|right"
-            style="@style/Widget.AppCompat.Button.Colored"/>
-    </FrameLayout>
-</RelativeLayout>
 
+        <include layout="@layout/zone_chatting"/>
 
+    </LinearLayout>
 
 
 </android.support.v4.widget.DrawerLayout>

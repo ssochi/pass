@@ -3,16 +3,9 @@ package com.example.administrator.pass.UI;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.widget.Button;
 
-import com.example.administrator.pass.R;
-import com.example.administrator.pass.tools.markerState;
-import com.example.administrator.pass.tools.Maptools;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
-import com.baidu.location.Poi;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
@@ -29,7 +22,10 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.PolygonOptions;
 import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.model.LatLng;
+import com.example.administrator.pass.R;
 import com.example.administrator.pass.Service.LocationService;
+import com.example.administrator.pass.tools.Maptools;
+import com.example.administrator.pass.tools.markerState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +83,7 @@ public class MapActivity extends AppCompatActivity {
 				return false;
 			}
 		});
+
 		mBaiduMap.setOnMapStatusChangeListener(new BaiduMap.OnMapStatusChangeListener() {
 			@Override
 			public void onMapStatusChangeStart(MapStatus mapStatus) {
@@ -265,9 +262,6 @@ public class MapActivity extends AppCompatActivity {
 		//在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
 		mMapView.onPause();
 	}
-
-
-
 
 	public void addMarker(LatLng latLng, String id, String info, int path) {
 		markerList.add(markerState.init(latLng, id, info, path, mBaiduMap, getResources()));

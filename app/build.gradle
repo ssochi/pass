@@ -5,7 +5,7 @@ android {
         config {
             keyAlias 'pass'
             keyPassword '373755675'
-            storeFile file('E:/android_new/jks_keystore/passKeyStore.jks')
+            storeFile file('passKeyStore.jks')
             storePassword '373755675'
         }
     }
