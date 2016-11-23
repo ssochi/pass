@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/chatboxsmall_layout"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/card_background_selector"
+                android:descendantFocusability="afterDescendants"
+                android:weightSum="1">
+
+    <com.example.administrator.pass.tools.CircleImageView
+        android:id="@+id/CircleView_chatboxsmall"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        />
+
+    <TextView
+        android:text="person interdusion"
+        android:id="@+id/tv_chatboxsmall1"
+        android:layout_width="357dp"
+        android:layout_height="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/CircleView_chatboxsmall"
+        android:layout_toEndOf="@+id/CircleView_chatboxsmall"/>
+
+    <TextView
+        android:text="name"
+        android:id="@+id/tv_chatboxsmall"
+        android:layout_width="357dp"
+        android:layout_height="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/CircleView_chatboxsmall"
+        android:layout_toEndOf="@+id/CircleView_chatboxsmall"/>
+</RelativeLayout>

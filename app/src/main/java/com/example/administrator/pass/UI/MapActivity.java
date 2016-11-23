@@ -3,7 +3,11 @@ package com.example.administrator.pass.UI;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.FrameLayout;
 
+import com.example.administrator.pass.R;
+import com.example.administrator.pass.tools.markerState;
+import com.example.administrator.pass.tools.Maptools;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.mapapi.SDKInitializer;
@@ -22,10 +26,7 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.PolygonOptions;
 import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.model.LatLng;
-import com.example.administrator.pass.R;
 import com.example.administrator.pass.Service.LocationService;
-import com.example.administrator.pass.tools.Maptools;
-import com.example.administrator.pass.tools.markerState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,10 +40,13 @@ public class MapActivity extends AppCompatActivity {
 	BitmapDescriptor mCurrentMarker;
 	boolean isFirstLoc = true;
 	static LatLng mpostion = new LatLng(39.926854, 119.56445);
+	static LatLng mpostion1 = new LatLng(39.926854+0.001, 119.56445+0.001);
+	static LatLng mpostion2 = new LatLng(39.926854+0.002, 119.56445);
 	List<markerState> markerList = new ArrayList<>();
 	Overlay Smoke;
 	float zoom;
 	boolean zoomchange = false;
+	int open_index = -1;
 
 
 	@Override
@@ -50,6 +54,7 @@ public class MapActivity extends AppCompatActivity {
 		SDKInitializer.initialize(getApplicationContext());
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_map);
+		getSupportActionBar().hide();
 		init();
 	}
 
@@ -62,7 +67,9 @@ public class MapActivity extends AppCompatActivity {
 		mMapView = (MapView) findViewById(R.id.bmapView);
 		mCurrentMode = MyLocationConfiguration.LocationMode.NORMAL;
 		mBaiduMap = mMapView.getMap();
-		addMarker(mpostion, "0", "infomation here", R.mipmap.location_marker);
+		addMarker(mpostion, "0", "infomation here0", R.mipmap.location_marker);
+		addMarker(mpostion1, "1", "infomation here1", R.mipmap.location_marker);
+		addMarker(mpostion2, "2", "infomation here2", R.mipmap.location_marker);
 		//去除百度logo
 		mMapView.removeViewAt(1);
 //        initHeatMap();
@@ -77,24 +84,30 @@ public class MapActivity extends AppCompatActivity {
 				if (!marker.getTitle().equals("null")) {
 					int id = Integer.parseInt(marker.getTitle());
 					markerState m = markerList.get(id);
-					m.click(marker, mBaiduMap, mBaiduMap.getMapStatus().zoom);
+					if(id != open_index){
+						if(open_index != -1){
+							markerState m1 = markerList.get(open_index);
+							m1.removeChatBox();
+							m1.hasClick = false;
+
+						}
+						m.click(marker, mBaiduMap, mBaiduMap.getMapStatus().zoom,(FrameLayout) findViewById(R.id.MapFramelayout),MapActivity.this);
+						open_index = id;
+					}else {
+						m.click(marker, mBaiduMap, mBaiduMap.getMapStatus().zoom,(FrameLayout) findViewById(R.id.MapFramelayout),MapActivity.this);
+					}
+
 				}
 
 				return false;
 			}
 		});
-
 		mBaiduMap.setOnMapStatusChangeListener(new BaiduMap.OnMapStatusChangeListener() {
 			@Override
 			public void onMapStatusChangeStart(MapStatus mapStatus) {
-				zoom = mapStatus.zoom;
-
-				for (int i = 0; i < markerList.size(); i++) {
-					markerState m = markerList.get(i);
-					if (m.hasClick) {
-						m.getLine().remove();
-						m.getChatbox().remove();
-					}
+				if(open_index != -1&& markerList.get(open_index).hasClick){
+					markerState m = markerList.get(open_index);
+					m.removeChatBox();
 				}
 
 			}
@@ -102,23 +115,15 @@ public class MapActivity extends AppCompatActivity {
 			@Override
 			public void onMapStatusChange(MapStatus mapStatus) {
 
+
+
 			}
 
 			@Override
 			public void onMapStatusChangeFinish(MapStatus mapStatus) {
-
-				float z = mapStatus.zoom;
-
-				for (int i = 0; i < markerList.size(); i++) {
-					markerState m = markerList.get(i);
-					if (m.hasClick) {
-						m.getLine().remove();
-						m.getChatbox().remove();
-						m.addChatbox(m.latLng, mBaiduMap, z);
-						m.addLine(m.latLng, mBaiduMap, z);
-
-
-					}
+				if(open_index != -1&& markerList.get(open_index).hasClick){
+					markerState m = markerList.get(open_index);
+					m.addChatbox((FrameLayout)findViewById(R.id.MapFramelayout),MapActivity.this,mBaiduMap);
 				}
 
 			}
@@ -263,7 +268,10 @@ public class MapActivity extends AppCompatActivity {
 		mMapView.onPause();
 	}
 
+
+
+
 	public void addMarker(LatLng latLng, String id, String info, int path) {
-		markerList.add(markerState.init(latLng, id, info, path, mBaiduMap, getResources()));
+		markerList.add(markerState.init(latLng, id, info, path, mBaiduMap, getResources(),MapActivity.this));
 	}
 }
