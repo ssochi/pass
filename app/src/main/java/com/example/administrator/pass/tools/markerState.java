@@ -61,7 +61,7 @@ public class markerState  {
 //		return line;
 //	}
 
-//	public void removeItem(){
+	//	public void removeItem(){
 //		this.line.remove();
 //		this.chatboxsmall.remove();
 //	}
@@ -89,32 +89,32 @@ public class markerState  {
 	}
 
 	public void addChatbox(final FrameLayout Fm, final Context context, final BaiduMap baiduMap) {
-			removeChatBox();
-			final Point p = baiduMap.getProjection().toScreenLocation(latLng);
-			FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
-					600, 100);
+		removeChatBox();
+		final Point p = baiduMap.getProjection().toScreenLocation(latLng);
+		FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
+				600, 100);
 //		FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
 //				600, 300);
-			lp.setMargins((int)(p.x)+75,(int)(p.y)-125,0,0);
-			LayoutInflater inflater3 = LayoutInflater.from(context);
-			View view = inflater3.inflate(R.layout.chatboxsmall,null);
-			view.setLayoutParams(lp);
-			CircleImageView circleImageView = (CircleImageView) view.findViewById(R.id.CircleView_chatboxsmall);
-			circleImageView.setImageResource(R.mipmap.head);
-			TextView tv = (TextView) view.findViewById(R.id.tv_chatboxsmall);
-			tv.setText("neuqer");
-			TextView tv1 = (TextView) view.findViewById(R.id.tv_chatboxsmall1);
-			tv1.setText("目标 工学馆八楼");
-			RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.chatboxsmall_layout);
-			relativeLayout.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					layoutonClick(fm,context,baiduMap,true);
-				}
-			});
-			Fm.addView(view);
-			chatBox = view;
-			fm = Fm;
+		lp.setMargins((int)(p.x)+75,(int)(p.y)-125,0,0);
+		LayoutInflater inflater3 = LayoutInflater.from(context);
+		View view = inflater3.inflate(R.layout.chatboxsmall,null);
+		view.setLayoutParams(lp);
+		CircleImageView circleImageView = (CircleImageView) view.findViewById(R.id.CircleView_chatboxsmall);
+		circleImageView.setImageResource(R.mipmap.head);
+		TextView tv = (TextView) view.findViewById(R.id.tv_chatboxsmall);
+		tv.setText("neuqer");
+		TextView tv1 = (TextView) view.findViewById(R.id.tv_chatboxsmall1);
+		tv1.setText("目标 工学馆八楼");
+		RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.chatboxsmall_layout);
+		relativeLayout.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				layoutonClick(fm,context,baiduMap,true);
+			}
+		});
+		Fm.addView(view);
+		chatBox = view;
+		fm = Fm;
 
 
 
@@ -251,7 +251,7 @@ public class markerState  {
 		WindowHeightpx = (float) point.getIn2();
 		return new markerState(false,info,marker,latLng,res);
 	}
-//
+	//
 //	public void setChatbox(Overlay chatboxsmall) {
 //		this.chatboxsmall = chatboxsmall;
 //	}
