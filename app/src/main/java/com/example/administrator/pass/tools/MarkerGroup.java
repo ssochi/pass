@@ -25,6 +25,14 @@ public class MarkerGroup {
 	Resources res;
 	FrameLayout container;
 	int open_index = -1;
+
+	/**
+	 *
+	 * @param context Activity的context
+	 * @param map BaiduMap
+	 * @param res getResource()
+	 * @param container FrameLayout
+	 */
 	public MarkerGroup(Context context, BaiduMap map, Resources res,FrameLayout container){
 		markerGroup = new ArrayList<>();
 		this.context = context;
@@ -32,10 +40,25 @@ public class MarkerGroup {
 		this.res = res;
 		this.container = container;
 	}
+
+	/**
+	 *
+	 * @param latLng
+	 * @param id
+	 * @param title
+	 * @param info
+	 * @param Username
+	 * @param Headpic_path
+	 * @param Markpic_path
+	 */
 	public void addMarker(LatLng latLng, String id, String title, String info, String Username, int Headpic_path, int Markpic_path){
 		markerState m = markerState.init(latLng,id,title,info,Username,Headpic_path,Markpic_path,context,map,res);
 		markerGroup.add(m);
 	}
+
+	/**
+	 * 设置点击marker事件 addMarker之后执行这个函数
+	 */
 	public void setOnClickLisener(){
 		map.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
 			@Override
