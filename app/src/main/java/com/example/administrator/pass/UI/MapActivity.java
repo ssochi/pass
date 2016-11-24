@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
 
 import com.example.administrator.pass.R;
+import com.example.administrator.pass.tools.MarkerGroup;
 import com.example.administrator.pass.tools.markerState;
 import com.example.administrator.pass.tools.Maptools;
 import com.baidu.location.BDLocation;
@@ -36,17 +37,15 @@ public class MapActivity extends AppCompatActivity {
 	LocationService mService;
 	MapView mMapView = null;
 	BaiduMap mBaiduMap;
+	MarkerGroup markerGroup;
 	private MyLocationConfiguration.LocationMode mCurrentMode;
 	BitmapDescriptor mCurrentMarker;
 	boolean isFirstLoc = true;
-	static LatLng mpostion = new LatLng(39.926854, 119.56445);
-	static LatLng mpostion1 = new LatLng(39.926854+0.001, 119.56445+0.001);
-	static LatLng mpostion2 = new LatLng(39.926854+0.002, 119.56445);
-	List<markerState> markerList = new ArrayList<>();
 	Overlay Smoke;
 	float zoom;
 	boolean zoomchange = false;
 	int open_index = -1;
+	LatLng mpostion = new LatLng(39.926854, 119.56445);
 
 
 	@Override
@@ -67,9 +66,6 @@ public class MapActivity extends AppCompatActivity {
 		mMapView = (MapView) findViewById(R.id.bmapView);
 		mCurrentMode = MyLocationConfiguration.LocationMode.NORMAL;
 		mBaiduMap = mMapView.getMap();
-		addMarker(mpostion, "0", "infomation here0", R.mipmap.location_marker);
-		addMarker(mpostion1, "1", "infomation here1", R.mipmap.location_marker);
-		addMarker(mpostion2, "2", "infomation here2", R.mipmap.location_marker);
 		//去除百度logo
 		mMapView.removeViewAt(1);
 //        initHeatMap();
@@ -78,58 +74,68 @@ public class MapActivity extends AppCompatActivity {
 		mBaiduMap.setMyLocationEnabled(true);
 		// 开启室内图
 		mBaiduMap.setIndoorEnable(true);
-		mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
-			@Override
-			public boolean onMarkerClick(Marker marker) {
-				if (!marker.getTitle().equals("null")) {
-					int id = Integer.parseInt(marker.getTitle());
-					markerState m = markerList.get(id);
-					if(id != open_index){
-						if(open_index != -1){
-							markerState m1 = markerList.get(open_index);
-							m1.removeChatBox();
-							m1.hasClick = false;
+		initMarker();
+//		mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
+//			@Override
+//			public boolean onMarkerClick(Marker marker) {
+//				if (!marker.getTitle().equals("null")) {
+//					int id = Integer.parseInt(marker.getTitle());
+//					markerState m = markerList.get(id);
+//					if(id != open_index){
+//						if(open_index != -1){
+//							markerState m1 = markerList.get(open_index);
+//							m1.removeChatBox();
+//							m1.hasClick = false;
+//
+//						}
+//						m.click(marker, mBaiduMap, mBaiduMap.getMapStatus().zoom,(FrameLayout) findViewById(R.id.MapFramelayout),MapActivity.this);
+//						open_index = id;
+//					}else {
+//						m.click(marker, mBaiduMap, mBaiduMap.getMapStatus().zoom,(FrameLayout) findViewById(R.id.MapFramelayout),MapActivity.this);
+//					}
+//
+//				}
+//
+//				return false;
+//			}
+//		});
+//		mBaiduMap.setOnMapStatusChangeListener(new BaiduMap.OnMapStatusChangeListener() {
+//			@Override
+//			public void onMapStatusChangeStart(MapStatus mapStatus) {
+//				if(open_index != -1&& markerList.get(open_index).hasClick){
+//					markerState m = markerList.get(open_index);
+//					m.removeChatBox();
+//				}
+//
+//			}
+//
+//			@Override
+//			public void onMapStatusChange(MapStatus mapStatus) {
+//
+//
+//
+//			}
+//
+//			@Override
+//			public void onMapStatusChangeFinish(MapStatus mapStatus) {
+//				if(open_index != -1&& markerList.get(open_index).hasClick){
+//					markerState m = markerList.get(open_index);
+//					m.addChatbox((FrameLayout)findViewById(R.id.MapFramelayout),MapActivity.this,mBaiduMap);
+//				}
+//
+//			}
+//		});
 
-						}
-						m.click(marker, mBaiduMap, mBaiduMap.getMapStatus().zoom,(FrameLayout) findViewById(R.id.MapFramelayout),MapActivity.this);
-						open_index = id;
-					}else {
-						m.click(marker, mBaiduMap, mBaiduMap.getMapStatus().zoom,(FrameLayout) findViewById(R.id.MapFramelayout),MapActivity.this);
-					}
 
-				}
+	}
 
-				return false;
-			}
-		});
-		mBaiduMap.setOnMapStatusChangeListener(new BaiduMap.OnMapStatusChangeListener() {
-			@Override
-			public void onMapStatusChangeStart(MapStatus mapStatus) {
-				if(open_index != -1&& markerList.get(open_index).hasClick){
-					markerState m = markerList.get(open_index);
-					m.removeChatBox();
-				}
-
-			}
-
-			@Override
-			public void onMapStatusChange(MapStatus mapStatus) {
-
-
-
-			}
-
-			@Override
-			public void onMapStatusChangeFinish(MapStatus mapStatus) {
-				if(open_index != -1&& markerList.get(open_index).hasClick){
-					markerState m = markerList.get(open_index);
-					m.addChatbox((FrameLayout)findViewById(R.id.MapFramelayout),MapActivity.this,mBaiduMap);
-				}
-
-			}
-		});
-
-
+	private void initMarker() {
+		markerGroup = new MarkerGroup(MapActivity.this,mBaiduMap,getResources(), (FrameLayout) findViewById(R.id.MapFramelayout));
+		LatLng postion = new LatLng(39.926854, 119.56445);
+//		LatLng mpostion1 = new LatLng(39.926854+0.001, 119.56445+0.001);
+//		LatLng mpostion2 = new LatLng(39.926854+0.002, 119.56445);
+		markerGroup.addMarker(postion, "0", "title0","info0" ,"username0",R.mipmap.head,R.mipmap.location_marker);
+		markerGroup.setOnClickLisener();
 	}
 
 	private void initHeatMap() {
@@ -271,7 +277,5 @@ public class MapActivity extends AppCompatActivity {
 
 
 
-	public void addMarker(LatLng latLng, String id, String info, int path) {
-		markerList.add(markerState.init(latLng, id, info, path, mBaiduMap, getResources(),MapActivity.this));
-	}
+
 }

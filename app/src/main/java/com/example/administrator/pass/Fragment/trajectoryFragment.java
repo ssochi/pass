@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -29,6 +30,7 @@ import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.DistanceUtil;
 import com.example.administrator.pass.R;
 import com.example.administrator.pass.Service.LocationService;
+import com.example.administrator.pass.tools.MarkerGroup;
 import com.example.administrator.pass.tools.point;
 
 import java.util.ArrayList;
@@ -52,6 +54,7 @@ public class trajectoryFragment extends Fragment {
 	BitmapDescriptor mCurrentMarker;
 	boolean isFirstLoc = true;
 	View root;
+	MarkerGroup markerGroup;
 
 	@Nullable
 	@Override
@@ -67,6 +70,7 @@ public class trajectoryFragment extends Fragment {
 	}
 	private void init() {
 		initMap();
+
 		initService();
 	}
 
@@ -74,7 +78,13 @@ public class trajectoryFragment extends Fragment {
 		mMapView = (MapView) root.findViewById(R.id.trajectoryMapView);
 		mCurrentMode = MyLocationConfiguration.LocationMode.NORMAL;
 		mBaiduMap = mMapView.getMap();
-		center = initTrajectory();
+		Map<Integer,LatLng> data =  initData();
+		center = initTrajectory(data);
+		markerGroup = new MarkerGroup(getActivity(),mBaiduMap,getResources(), (FrameLayout) root.findViewById(R.id.zone_container));
+		for(int i = 0;i<data.size();i++){
+			markerGroup.addMarker(data.get(i),""+i,"title"+i,"info"+i,"Username"+i,R.drawable.mini_avatar_shadow,R.mipmap.location_marker);
+		}
+		markerGroup.setOnClickLisener();
 		//去除百度logo
 		mMapView.removeViewAt(1);
 		//去除zoom工具
@@ -86,82 +96,38 @@ public class trajectoryFragment extends Fragment {
 
 	}
 
-
-
-	private void initSmoke(int acc,Double r,LatLng postion) {
-
-		List<LatLng> pts = new ArrayList<LatLng>();
-		Double latitude = postion.latitude;
-		Double longitude = postion.longitude;
-		Double lat = 0.0;
-		Double lon = 0.0;
-
-		for(int i=0;i<acc/2+1;i++){
-			lat = latitude + r*Math.sin((2*Math.PI)/acc*i);
-			lon = longitude + r*Math.cos((2*Math.PI)/acc*i);
-			LatLng pt = new LatLng(lat,lon );
-			pts.add(pt);
-		}
-		LatLng pt1 = new LatLng(lat,180);
-		pts.add(pt1);
-		LatLng pt2 = new LatLng(90,180);
-		pts.add(pt2);
-		LatLng pt3 = new LatLng(90,-180);
-		pts.add(pt3);
-		LatLng pt4 = new LatLng(latitude + r*Math.sin((2*Math.PI)/acc*0),-180);
-		pts.add(pt4);
-		for(int i=acc/2;i<acc+1;i++){
-			lat = latitude + r*Math.sin((2*Math.PI)/acc*i);
-			lon = longitude + r*Math.cos((2*Math.PI)/acc*i);
-			LatLng pt = new LatLng(lat,lon );
-			pts.add(pt);
-		}
-		 pt1 = new LatLng(lat,180);
-		pts.add(pt1);
-		 pt2 = new LatLng(-90,180);
-		pts.add(pt2);
-		 pt3 = new LatLng(-90,-180);
-		pts.add(pt3);
-		 pt4 = new LatLng(latitude + r*Math.sin((2*Math.PI)/acc*(acc/2)),-180);
-		pts.add(pt4);
-		//构建用户绘制多边形的Option对象
-		OverlayOptions polygonOption = new PolygonOptions()
-				.points(pts)
-				.stroke(new Stroke(4, 0))
-				.fillColor(0x99999900);
-//在地图上添加多边形Option，用于显示
-		mBaiduMap.addOverlay(polygonOption);
-
-
-	}
-
-	private point initTrajectory() {
-		Map<Integer,point> params = new HashMap<>();
+	private Map<Integer,LatLng> initData() {
+		Map<Integer,LatLng> params = new HashMap<>();
 		int num = 5;
 		Random r = new Random();
+		for(int i=0;i<num;i++){
+			params.put(i,new LatLng(90*r.nextDouble()-0.5,180*r.nextDouble()-1));//in1[-90,90] in2[-180,180]
+		}
+		return params;
+	}
+
+
+	private point initTrajectory(Map<Integer,LatLng> params) {
 		point MAX = new point(-90,-180);
 		point MIN = new point(90,180);
+		int num = params.size();
 		for(int i=0;i<num;i++){
-			params.put(i,new point(1*r.nextDouble()-0.5,2*r.nextDouble()-1));//in1[-90,90] in2[-180,180]
-		}
-
-		for(int i=0;i<num;i++){
-			if(params.get(i).getIn1()>MAX.getIn1()){
-				MAX.setIn1(params.get(i).getIn1());
+			if(params.get(i).latitude>MAX.getIn1()){
+				MAX.setIn1(params.get(i).latitude);
 			}
-			if(params.get(i).getIn2()>MAX.getIn2()){
-				MAX.setIn2(params.get(i).getIn2());
+			if(params.get(i).longitude>MAX.getIn2()){
+				MAX.setIn2(params.get(i).longitude);
 			}
-			if(params.get(i).getIn1()<MIN.getIn1()){
-				MIN.setIn1(params.get(i).getIn1());
+			if(params.get(i).latitude<MIN.getIn1()){
+				MIN.setIn1(params.get(i).latitude);
 			}
-			if(params.get(i).getIn2()<MIN.getIn2()){
-				MIN.setIn2(params.get(i).getIn2());
+			if(params.get(i).longitude<MIN.getIn2()){
+				MIN.setIn2(params.get(i).longitude);
 			}
-			point p = params.get(i);
+			LatLng p = params.get(i);
 			//定义Maker坐标点
-			LatLng point = new LatLng(p.getIn1(), p.getIn2());
-			System.out.println("N0"+i+"********"+p.getIn1()+"N0"+i+"********"+p.getIn2());
+			LatLng point = new LatLng(p.latitude, p.longitude);
+			System.out.println("N0"+i+"********"+p.latitude+"N0"+i+"********"+p.longitude);
 //构建Marker图标
 			BitmapDescriptor bitmap = BitmapDescriptorFactory
 					.fromResource(R.mipmap.location_marker);
@@ -191,7 +157,7 @@ public class trajectoryFragment extends Fragment {
 		return 3;
 	}
 
-	private void addTrajectory(Map<Integer, point> params, int num) {
+	private void addTrajectory(Map<Integer, LatLng> params, int num) {
 		//构造纹理资源
 		BitmapDescriptor custom1 = BitmapDescriptorFactory
 				.fromResource(R.mipmap.line);
@@ -203,7 +169,7 @@ public class trajectoryFragment extends Fragment {
 		List<LatLng> points = new ArrayList<LatLng>();
 		List<Integer> index = new ArrayList<Integer>();
 		for(int i=0;i<num;i++){
-			points.add(new LatLng(params.get(i).getIn1(),params.get(i).getIn2()));
+			points.add(new LatLng(params.get(i).latitude,params.get(i).longitude));
 			index.add(0);
 		}
 		OverlayOptions ooPolyline = new PolylineOptions().width(15).color(0xAAFF0000).points(points).customTextureList(customList).textureIndex(index);
@@ -213,34 +179,6 @@ public class trajectoryFragment extends Fragment {
 
 	}
 
-	private void initHeatMap() {
-		//设置渐变颜色值
-		int[] DEFAULT_GRADIENT_COLORS = {Color.rgb(102, 225,  0), Color.rgb(255, 0, 0)  };
-		//设置渐变颜色起始值
-		float[] DEFAULT_GRADIENT_START_POINTS = { 0.2f, 1f };
-		//构造颜色渐变对象
-		Gradient gradient = new Gradient(DEFAULT_GRADIENT_COLORS, DEFAULT_GRADIENT_START_POINTS);
-		//以下数据为随机生成地理位置点，开发者根据自己的实际业务，传入自有位置数据即可
-		List<LatLng> randomList = new ArrayList<LatLng>();
-		Random r = new Random();
-		for (int i = 0; i < 5000; i++) {
-			// 116.220000,39.780000 116.570000,40.150000
-			int rlat = r.nextInt(370000);
-			int rlng = r.nextInt(370000);
-			int lat = 39930528-370000/2 + rlat;
-			int lng = 119555501-370000/2 + rlng;
-			LatLng ll = new LatLng(lat / 1E6, lng / 1E6);
-			randomList.add(ll);
-		}
-		//在大量热力图数据情况下，build过程相对较慢，建议放在新建线程实现
-		HeatMap heatmap = new HeatMap.Builder()
-				.data(randomList)
-				.gradient(gradient)
-				.build();
-		//在地图上添加热力图
-		mBaiduMap.addHeatMap(heatmap);
-
-	}
 
 	private void initService() {
 		trajectoryFragment.MyLocationListener myListener = new trajectoryFragment.MyLocationListener();

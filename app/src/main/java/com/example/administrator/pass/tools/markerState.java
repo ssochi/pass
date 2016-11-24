@@ -40,32 +40,23 @@ public class markerState  {
 	static float WindowWidthpx;
 	static float WindowHeightpx;
 	public  FrameLayout fm;
+	int Headpic_path;
+	int Markerpic_path;
+	String title;
+	String Username;
 
 
-	public markerState(boolean hasClick, String information, Overlay marker,LatLng latLng,Resources res){
+	public markerState(boolean hasClick, String information, Overlay marker,LatLng latLng,String title,String Username,int Markerpic_path,int Headpic_path,Resources res){
 		this.hasClick = hasClick;
 		this.info = information;
 		this.marker = marker;
 		this.latLng = latLng;
 		this.res = res;
-
+		this.title = title;
+		this.Headpic_path = Headpic_path;
+		this.Markerpic_path = Markerpic_path;
+		this.Username = Username;
 		info_len = getTextWidth(info);
-
-	}
-
-//	public void setLine(Overlay line) {
-//		this.line = line;
-//	}
-//
-//	public Overlay getLine() {
-//		return line;
-//	}
-
-	//	public void removeItem(){
-//		this.line.remove();
-//		this.chatboxsmall.remove();
-//	}
-	public void setItem(BaiduMap baiduMap){
 
 	}
 
@@ -100,11 +91,11 @@ public class markerState  {
 		View view = inflater3.inflate(R.layout.chatboxsmall,null);
 		view.setLayoutParams(lp);
 		CircleImageView circleImageView = (CircleImageView) view.findViewById(R.id.CircleView_chatboxsmall);
-		circleImageView.setImageResource(R.mipmap.head);
+		circleImageView.setImageResource(Headpic_path);
 		TextView tv = (TextView) view.findViewById(R.id.tv_chatboxsmall);
-		tv.setText("neuqer");
+		tv.setText(Username);
 		TextView tv1 = (TextView) view.findViewById(R.id.tv_chatboxsmall1);
-		tv1.setText("目标 工学馆八楼");
+		tv1.setText(title);
 		RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.chatboxsmall_layout);
 		relativeLayout.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -132,11 +123,11 @@ public class markerState  {
 			View view = inflater3.inflate(R.layout.chatboxbig,null);
 			view.setLayoutParams(lp);
 			CircleImageView circleImageView = (CircleImageView) view.findViewById(R.id.CircleView_chatboxbig);
-			circleImageView.setImageResource(R.mipmap.head);
+			circleImageView.setImageResource(Headpic_path);
 			TextView tv = (TextView) view.findViewById(R.id.tv_chatboxbig);
-			tv.setText("neuqer");
+			tv.setText(Username);
 			TextView tv1 = (TextView) view.findViewById(R.id.tv_chatboxbig1);
-			tv1.setText("目标 工学馆八楼");
+			tv1.setText(title);
 			RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.chatboxbig_layout);
 			TextView tv2 = (TextView) view.findViewById(R.id.tv_chatboxbig2);
 			tv2.setText(info);
@@ -155,110 +146,42 @@ public class markerState  {
 	}
 
 	/**
-	 * 添加文字
-	 * @param markerPosition 起始位置
-	 * @param baiduMap
-	 * @param z zoom
+	 *
+	 * @param latLng
+	 * @param id
+	 * @param title
+	 * @param info
+	 * @param Username
+	 * @param Headpic_path
+	 * @param Markpic_path
+	 * @param context
+	 * @param map
+	 * @param res
 	 * @return
 	 */
-//	public Overlay addLine(LatLng markerPosition, BaiduMap baiduMap, float z) {
-//		int MaxZoom = zoom[0];
-//		double distance = 0.0;
-//		distance = MaxZoom/Math.pow(2.0,z-3);
-//
-//		LatLng p =  getNextLatlng(markerPosition,distance/2,Math.PI/2);
-//		p = getNextLatlng(p,distance + distance/5*(info_len/2),0);
-//		OverlayOptions textOption = new TextOptions()
-//				.bgColor(0)
-//				.fontSize(50)
-//				.fontColor(0xFFFF00FF)
-//				.text(this.info)
-//				.position(p);
-//		//在地图上添加该文字对象并显示
-//		Overlay line = baiduMap.addOverlay(textOption);
-//		setLine(line);
-//		return line;
-//	}
-
-	/**
-	 * 添加对话框
-	 * @param markerPosition 起始位置
-	 * @param baiduMap
-	 * @param z zoom
-	 * @return
-	 */
-//	public Overlay addChatbox(LatLng markerPosition,BaiduMap baiduMap,float z){
-//
-//		int MaxZoom = zoom[0];
-//		double distance = MaxZoom/Math.pow(2.0,z-3);
-//		double w = distance;
-//		double l = (distance*2.5)/11* info_len;
-//		List<LatLng> pts = new ArrayList<LatLng>();
-//		LatLng start =  getNextLatlng(markerPosition,distance/2,Math.PI/2);
-//		start = getNextLatlng(start,distance/2,0);
-//		LatLng pt1 = getNextLatlng(start,w/3,Math.PI/6);
-//		LatLng pt2 = getNextLatlng(pt1,w/3,Math.PI/2);
-//		LatLng pt3 = getNextLatlng(pt2,l,0);
-//		LatLng pt4 = getNextLatlng(pt3,w,Math.PI/2*3);
-//		LatLng pt5 = getNextLatlng(pt4,l,Math.PI);
-//		LatLng pt6 = getNextLatlng(pt5,w/3,Math.PI/2);
-//		pts.addChatbox(start);
-//		pts.addChatbox(pt1);
-//		pts.addChatbox(pt2);
-//		pts.addChatbox(pt3);
-//		pts.addChatbox(pt4);
-//		pts.addChatbox(pt5);
-//		pts.addChatbox(pt6);
-//		//构建用户绘制多边形的Option对象
-//		OverlayOptions polygonOption = new PolygonOptions()
-//				.points(pts)
-//				.stroke(new Stroke(5, 0xAA00FF00))
-//				.fillColor(0xAAFFFF00);
-//		//在地图上添加多边形Option，用于显示
-//		Overlay Chatbox = baiduMap.addOverlay(polygonOption);
-//		setChatbox(Chatbox);
-//		return  Chatbox;
-//
-//	}
-
-	/**
-	 * 初始化
-	 * @param latLng marker坐标
-	 * @param id marker的id
-	 * @param info marker处的留言
-	 * @param path 图片的地址
-	 * @param mBaiduMap
-	 * @return
-	 */
-	public static markerState init(LatLng latLng, String id, String info, int path, BaiduMap mBaiduMap,Resources res,Context context){
+	public static markerState init(LatLng latLng, String id, String title, String info, String Username, int Headpic_path, int Markpic_path, Context context, BaiduMap map, Resources res){
 		//定义Maker坐标点
 
 		//构建Marker图标
 		BitmapDescriptor bitmap = BitmapDescriptorFactory
-				.fromResource(path);
+				.fromResource(Markpic_path);
 		//构建MarkerOption，用于在地图上添加Marker
 		OverlayOptions option = new MarkerOptions()
 				.position(latLng)
 				.icon(bitmap)
 				.title(id);
 		//在地图上添加Marker，并显示
-		Overlay marker = mBaiduMap.addOverlay(option);
+		Overlay marker = map.addOverlay(option);
 		point point = DisplayUtil.getScreenSizeOfDevice2(res, context);
 		WindowWidth = (float) ((float) point.getIn1()*2.54);
 		WindowHeight = (float) ((float) point.getIn2()*2.54);
 		point = DisplayUtil.getScreenSizeOfDevice1(res,context);
 		WindowWidthpx = (float) point.getIn1();
 		WindowHeightpx = (float) point.getIn2();
-		return new markerState(false,info,marker,latLng,res);
+
+
+		return new markerState(false,info,marker,latLng,title,Username,Markpic_path,Headpic_path,res);
 	}
-	//
-//	public void setChatbox(Overlay chatboxsmall) {
-//		this.chatboxsmall = chatboxsmall;
-//	}
-//
-//	public Overlay getChatbox() {
-//		return chatboxsmall;
-//	}
 	public void removeChatBox(){
 		if(hasClick){
 			fm.removeView(chatBox);
