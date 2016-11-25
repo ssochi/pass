@@ -275,7 +275,7 @@ public class Maptools {
 		double y = az*bx - ax*bz;
 		double z = ax*by - ay*bx;
 		V3 target = new V3(x,y,z);
-		target = getmR(target, 1.0);
+		target = getmR(target, r);
 		return target;
 	}
 

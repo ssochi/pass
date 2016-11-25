@@ -102,7 +102,7 @@ public class Vector3 {
 		double y = az*bx - ax*bz;
 		double z = ax*by - ay*bx;
 		Vector3 target = new Vector3(x,y,z);
-		target = Vector3.getmR(target, 1.0);
+		target = Vector3.getmR(target, r);
 		return target;
 	}
 
