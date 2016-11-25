@@ -32,7 +32,7 @@ public class DisplayUtil {
             double x = Math.pow(point.x / dm.xdpi, 2);
             double y = Math.pow(point.y / dm.ydpi, 2);
             double screenInches = Math.sqrt(x + y);
-            Log.d(TAG, "Screen inches : " + screenInches);
+
             return new point(Math.sqrt(x), Math.sqrt(y));
         }
         else {

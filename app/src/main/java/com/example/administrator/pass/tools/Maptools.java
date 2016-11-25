@@ -115,7 +115,7 @@ public class Maptools {
 		for(int i=0;i<acc/2+1;i++){
 
 //				temp = new V3(R*Math.cos((2*Math.PI)/acc*i),R*Math.sin((2*Math.PI)/acc*i),0.0);
-				temp = getTemp(center,vector,(2*Math.PI)/acc*i);
+				temp = getRotate(center,vector,(2*Math.PI)/acc*i);
 //				mR = getvertical(center,temp,r);
 				mR = getmR(temp,r);
 //			System.out.println(mR.var1+"%%%%%%%"+mR.var2+"%%%%%%%%"+mR.var3);
@@ -137,7 +137,7 @@ public class Maptools {
 		pts.add(pt4);
 		for(int i=acc/2;i<acc+1;i++){
 
-				temp = getTemp(center,vector,(2*Math.PI)/acc*i);
+				temp = getRotate(center,vector,(2*Math.PI)/acc*i);
 //				mR = getvertical(center,temp,r);
 				mR = getmR(temp,r);
 
@@ -179,6 +179,13 @@ public class Maptools {
 			this.var2 = var2;
 			this.var3 = var3;
 		}
+
+		/**
+		 * 两向量相加
+		 * @param v1
+		 * @param v2
+		 * @return
+		 */
 		public static V3 add(V3 v1, V3 v2){
 			return new V3(v1.var1+v2.var1,v1.var2+v2.var2,v1.var3+v2.var3);
 		}
@@ -192,7 +199,7 @@ public class Maptools {
 	 * @param ang
 	 * @return
 	 */
-	public static V3 getTemp(V3 center,V3 vector,Double ang){
+	public static V3 getRotate(V3 center, V3 vector, Double ang){
 		center = getmR(center,1.0);
 		Double x = center.var1;
 		Double y = center.var2;
@@ -258,34 +265,30 @@ public class Maptools {
 	 * @return
 	 */
 	public static V3 getvertical(V3 v1, V3 v2, Double r){
-		Double a1 = v1.var1;
-		Double a2 = v1.var2;
-		Double a3 = v1.var3;
-		Double b1 = v2.var1;
-		Double b2 = v2.var2;
-		Double b3 = v2.var3;
-		Double dy = (a1*b3-b1*a3)/(b2*a3-b3*a2);
-		Double dz =  (a1*b2-a2*b1)/(a2*b3-a3*b2);
-		Double x = Math.sqrt((r*r)/(1+dy*dy+dz*dz));
-		if ((b2*a3-b3*a2) == 0){
-			x = 0.0;
-			Double z = Math.sqrt((r*r)/((a3*a3)/(a2*a2)+1));
-			Double y = -1*(a3/a2)*z;
-			if(x*a1+y*a2+z*a3 != 0||x*b1+y*b2+z*b3 != 0){
-//				System.out.println("ERROR!");
-			}
-			return new V3(x,y,z);
-		}
-
-		if(x*a1+dy*x*a2+dz*x*a3 != 0||x*b1+dy*x*b2+dz*x*b3 != 0){
-			Double e1 = x*a1+dy*x*a2+dz*x*a3;
-			Double e2 = x*b1+dy*x*b2+dz*x*b3;
-//			System.out.println("ERROR!     "+e1+"    "+"ERROR!     "+e2);
-		}
-
-		return new V3(x,dy*x,dz*x);
+		Double ax = v1.var1;
+		Double ay = v1.var2;
+		Double az = v1.var3;
+		Double bx = v2.var1;
+		Double by = v2.var2;
+		Double bz = v2.var3;
+		double x = ay*bz - az*by;
+		double y = az*bx - ax*bz;
+		double z = ax*by - ay*bx;
+		V3 target = new V3(x,y,z);
+		target = getmR(target, 1.0);
+		return target;
 	}
 
+	/**
+	 * 获得两个点的距离
+	 * @param in1
+	 * @param in2
+	 * @return
+	 */
+	public static double getDistance(V3 in1,V3 in2){
+		double distance = Math.sqrt(Math.pow((in1.var1-in2.var1),2)+Math.pow((in1.var2-in2.var2),2)+Math.pow((in1.var3-in2.var3),2));
+		return distance;
+	}
 	/**
 	 * 获得方向相同膜为r的向量
 	 * @param v
@@ -303,8 +306,9 @@ public class Maptools {
 		z = z/k;
 		return new V3(x,y,z);
 	}
+
 	public static LatLng getPoint(V3 center,double acc,int i,double r,V3 half,V3 vector){
-		V3 temp = getTemp(center,vector,(2*Math.PI)/acc*i);
+		V3 temp = getRotate(center,vector,(2*Math.PI)/acc*i);
 //				mR = getvertical(center,temp,r);
 		V3 mR = getmR(temp,r);
 //			System.out.println(mR.var1+"%%%%%%%"+mR.var2+"%%%%%%%%"+mR.var3);
@@ -326,7 +330,7 @@ public class Maptools {
 		Double rate =  Math.sqrt(R*R-r*r)/R;
 		V3 half = new Maptools.V3(rate*center.var1,rate*center.var2,rate*center.var3);
 		V3 vector = new V3(1.0,-1*center.var1/center.var2,0.0);
-		V3 temp = getTemp(center,vector,arg);
+		V3 temp = getRotate(center,vector,arg);
 		temp = getmR(temp,r);
 		temp = V3.add(center,temp);
 		LatLng out = changexyzToLatLng(temp);
