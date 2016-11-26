@@ -3,6 +3,8 @@ package com.example.administrator.pass.tools;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.text.TextUtils;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -44,9 +46,12 @@ public class markerState  {
 	int Markerpic_path;
 	String title;
 	String Username;
+	boolean isSmall;
+	Context context;
+	BaiduMap baiduMap;
 
 
-	public markerState(boolean hasClick, String information, Overlay marker,LatLng latLng,String title,String Username,int Markerpic_path,int Headpic_path,Resources res){
+	public markerState(boolean hasClick, String information, Overlay marker,LatLng latLng,String title,String Username,int Markerpic_path,int Headpic_path,Resources res,Context context,BaiduMap map){
 		this.hasClick = hasClick;
 		this.info = information;
 		this.marker = marker;
@@ -56,6 +61,8 @@ public class markerState  {
 		this.Headpic_path = Headpic_path;
 		this.Markerpic_path = Markerpic_path;
 		this.Username = Username;
+		this.context = context;
+		this.baiduMap = map;
 		info_len = getTextWidth(info);
 
 	}
@@ -81,6 +88,7 @@ public class markerState  {
 
 	public void addChatbox(final FrameLayout Fm, final Context context, final BaiduMap baiduMap) {
 		removeChatBox();
+		isSmall = true;
 		final Point p = baiduMap.getProjection().toScreenLocation(latLng);
 		FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
 				600, 100);
@@ -94,7 +102,7 @@ public class markerState  {
 		circleImageView.setImageResource(Headpic_path);
 		TextView tv = (TextView) view.findViewById(R.id.tv_chatboxsmall);
 		tv.setText(Username);
-		TextView tv1 = (TextView) view.findViewById(R.id.tv_chatboxsmall1);
+		MarqueeTextView tv1 = (MarqueeTextView) view.findViewById(R.id.tv_chatboxsmall1);
 		tv1.setText(title);
 		RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.chatboxsmall_layout);
 		relativeLayout.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +121,7 @@ public class markerState  {
 	public void layoutonClick(final FrameLayout Fm, final Context context, final BaiduMap baiduMap, boolean isSmall){
 		removeChatBox();
 		if(isSmall){
+			this.isSmall = false;
 			final Point p = baiduMap.getProjection().toScreenLocation(latLng);
 			FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
 					600, 500);
@@ -126,15 +135,17 @@ public class markerState  {
 			circleImageView.setImageResource(Headpic_path);
 			TextView tv = (TextView) view.findViewById(R.id.tv_chatboxbig);
 			tv.setText(Username);
-			TextView tv1 = (TextView) view.findViewById(R.id.tv_chatboxbig1);
+			MarqueeTextView tv1 = (MarqueeTextView) view.findViewById(R.id.tv_chatboxbig1);
 			tv1.setText(title);
 			RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.chatboxbig_layout);
 			TextView tv2 = (TextView) view.findViewById(R.id.tv_chatboxbig2);
 			tv2.setText(info);
+			tv2.setMovementMethod(new ScrollingMovementMethod());
 			relativeLayout.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					layoutonClick(fm,context,baiduMap,false);
+
 				}
 			});
 			Fm.addView(view);
@@ -144,7 +155,11 @@ public class markerState  {
 			addChatbox(fm,context,baiduMap);
 		}
 	}
+	public void updateChatbox(){
 
+		layoutonClick(fm,context,baiduMap,!isSmall);
+
+	}
 	/**
 	 *
 	 * @param latLng
@@ -180,8 +195,9 @@ public class markerState  {
 		WindowHeightpx = (float) point.getIn2();
 
 
-		return new markerState(false,info,marker,latLng,title,Username,Markpic_path,Headpic_path,res);
+		return new markerState(false,info,marker,latLng,title,Username,Markpic_path,Headpic_path,res,context,map);
 	}
+
 	public void removeChatBox(){
 		if(hasClick){
 			fm.removeView(chatBox);

@@ -105,7 +105,7 @@ public class MarkerGroup {
 			public void onMapStatusChangeFinish(MapStatus mapStatus) {
 				if(open_index != -1&& markerGroup.get(open_index).hasClick){
 					markerState m = markerGroup.get(open_index);
-					m.addChatbox(container,context,map);
+					m.updateChatbox();
 				}
 
 			}

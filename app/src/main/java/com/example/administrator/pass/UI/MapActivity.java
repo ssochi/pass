@@ -75,56 +75,7 @@ public class MapActivity extends AppCompatActivity {
 		// 开启室内图
 		mBaiduMap.setIndoorEnable(true);
 		initMarker();
-//		mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
-//			@Override
-//			public boolean onMarkerClick(Marker marker) {
-//				if (!marker.getTitle().equals("null")) {
-//					int id = Integer.parseInt(marker.getTitle());
-//					markerState m = markerList.get(id);
-//					if(id != open_index){
-//						if(open_index != -1){
-//							markerState m1 = markerList.get(open_index);
-//							m1.removeChatBox();
-//							m1.hasClick = false;
-//
-//						}
-//						m.click(marker, mBaiduMap, mBaiduMap.getMapStatus().zoom,(FrameLayout) findViewById(R.id.MapFramelayout),MapActivity.this);
-//						open_index = id;
-//					}else {
-//						m.click(marker, mBaiduMap, mBaiduMap.getMapStatus().zoom,(FrameLayout) findViewById(R.id.MapFramelayout),MapActivity.this);
-//					}
-//
-//				}
-//
-//				return false;
-//			}
-//		});
-//		mBaiduMap.setOnMapStatusChangeListener(new BaiduMap.OnMapStatusChangeListener() {
-//			@Override
-//			public void onMapStatusChangeStart(MapStatus mapStatus) {
-//				if(open_index != -1&& markerList.get(open_index).hasClick){
-//					markerState m = markerList.get(open_index);
-//					m.removeChatBox();
-//				}
-//
-//			}
-//
-//			@Override
-//			public void onMapStatusChange(MapStatus mapStatus) {
-//
-//
-//
-//			}
-//
-//			@Override
-//			public void onMapStatusChangeFinish(MapStatus mapStatus) {
-//				if(open_index != -1&& markerList.get(open_index).hasClick){
-//					markerState m = markerList.get(open_index);
-//					m.addChatbox((FrameLayout)findViewById(R.id.MapFramelayout),MapActivity.this,mBaiduMap);
-//				}
-//
-//			}
-//		});
+
 
 
 	}
@@ -134,7 +85,10 @@ public class MapActivity extends AppCompatActivity {
 		LatLng postion = new LatLng(39.926854, 119.56445);
 //		LatLng mpostion1 = new LatLng(39.926854+0.001, 119.56445+0.001);
 //		LatLng mpostion2 = new LatLng(39.926854+0.002, 119.56445);
-		markerGroup.addMarker(postion, "0", "title0","info0" ,"username0",R.mipmap.head,R.mipmap.location_marker);
+		String info = "你为什么要召唤我？\n"+ "为了十四斤的农药\n"+ "讲课开始了~~\n"+ "嘿嘿，该收钱了~\n"+
+				"侍从！来我房间！\n"+ "~啊~感觉真棒！\n"+ "随风而去吧 小虫子们！\n "+ "我对你非常感谢\n"+
+				"铭记于心年轻人\n"+ "这群怪不是我引的\n"+ "你~需要我的帮助~\n";
+		markerGroup.addMarker(postion, "0", "个性签名总是很长很长很长很长很长很长很长很长很长很长很长很长",info ,"ssochi [VIP]",R.mipmap.head,R.mipmap.location_marker);
 		markerGroup.setOnClickLisener();
 	}
 
@@ -202,52 +156,6 @@ public class MapActivity extends AppCompatActivity {
 		mService.start();
 	}
 
-	private void initSmoke(int acc, Double r, LatLng postion) {
-
-		List<LatLng> pts = new ArrayList<LatLng>();
-		Double latitude = postion.latitude;
-		Double longitude = postion.longitude;
-		Double lat = 0.0;
-		Double lon = 0.0;
-
-		for (int i = 0; i < acc / 2 + 1; i++) {
-			lat = latitude + r * Math.sin((2 * Math.PI) / acc * i);
-			lon = longitude + r * Math.cos((2 * Math.PI) / acc * i);
-			LatLng pt = new LatLng(lat, lon);
-			pts.add(pt);
-		}
-		LatLng pt1 = new LatLng(lat, 180);
-		pts.add(pt1);
-		LatLng pt2 = new LatLng(90, 180);
-		pts.add(pt2);
-		LatLng pt3 = new LatLng(90, -180);
-		pts.add(pt3);
-		LatLng pt4 = new LatLng(latitude + r * Math.sin((2 * Math.PI) / acc * 0), -180);
-		pts.add(pt4);
-		for (int i = acc / 2; i < acc + 1; i++) {
-			lat = latitude + r * Math.sin((2 * Math.PI) / acc * i);
-			lon = longitude + r * Math.cos((2 * Math.PI) / acc * i);
-			LatLng pt = new LatLng(lat, lon);
-			pts.add(pt);
-		}
-		pt1 = new LatLng(lat, 180);
-		pts.add(pt1);
-		pt2 = new LatLng(-90, 180);
-		pts.add(pt2);
-		pt3 = new LatLng(-90, -180);
-		pts.add(pt3);
-		pt4 = new LatLng(latitude + r * Math.sin((2 * Math.PI) / acc * (acc / 2)), -180);
-		pts.add(pt4);
-		//构建用户绘制多边形的Option对象
-		OverlayOptions polygonOption = new PolygonOptions()
-				.points(pts)
-				.stroke(new Stroke(4, 0))
-				.fillColor(0x99999900);
-//在地图上添加多边形Option，用于显示
-		mBaiduMap.addOverlay(polygonOption);
-
-
-	}
 
 
 	@Override
